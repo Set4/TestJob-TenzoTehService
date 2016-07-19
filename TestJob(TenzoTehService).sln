@@ -3,11 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TestJob(TenzoTehService)", "TestJob(TenzoTehService)\TestJob(TenzoTehService).shproj", "{2A6E78F6-C9E2-41C1-BDE7-BAF0E9E1C766}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncryptionServer", "EncryptionServer\EncryptionServer.csproj", "{5196468F-2C4D-4BEB-AD97-2B2C6C767EA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientEncryptionApplication", "ClientEncryptionApplication\ClientEncryptionApplication.csproj", "{B03F7FC0-1F81-405A-BC61-6959C3C53AB9}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		TestJob(TenzoTehService)\TestJob(TenzoTehService).projitems*{2a6e78f6-c9e2-41c1-bde7-baf0e9e1c766}*SharedItemsImports = 13
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5196468F-2C4D-4BEB-AD97-2B2C6C767EA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5196468F-2C4D-4BEB-AD97-2B2C6C767EA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5196468F-2C4D-4BEB-AD97-2B2C6C767EA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5196468F-2C4D-4BEB-AD97-2B2C6C767EA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B03F7FC0-1F81-405A-BC61-6959C3C53AB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B03F7FC0-1F81-405A-BC61-6959C3C53AB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B03F7FC0-1F81-405A-BC61-6959C3C53AB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B03F7FC0-1F81-405A-BC61-6959C3C53AB9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
