@@ -1,0 +1,15 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TestJob(TenzoTehService)", "TestJob(TenzoTehService)\TestJob(TenzoTehService).shproj", "{2A6E78F6-C9E2-41C1-BDE7-BAF0E9E1C766}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		TestJob(TenzoTehService)\TestJob(TenzoTehService).projitems*{2a6e78f6-c9e2-41c1-bde7-baf0e9e1c766}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
