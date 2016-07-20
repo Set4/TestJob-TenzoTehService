@@ -8,10 +8,13 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace EncryptionServer
 {
-    //otvet
+    /// <summary>
+    /// ответ(от сервера) 
+    /// </summary>
     [Serializable]
     public class Response
     {
@@ -27,6 +30,9 @@ namespace EncryptionServer
             Result = result;
         }
     }
+    /// <summary>
+    /// резельтат операции на сервере
+    /// </summary>
     [Serializable]
     public enum ResultResponse
     {
@@ -38,13 +44,15 @@ namespace EncryptionServer
 
 
 
-    //zapros
+    /// <summary>
+    /// запрос(к серверу) 
+    /// </summary>
     [Serializable]
     public class Request
     {
             
-        public string Message { get; private set; }
-        public OperationRequest Operation { get; private set; }
+        public string Message { get; set; }
+        public OperationRequest Operation { get;  set; }
 
         public Request()
         {
@@ -57,6 +65,9 @@ namespace EncryptionServer
             Message = message;
         }
     }
+    /// <summary>
+    /// список оперпций
+    /// </summary>
     [Serializable]
     public enum OperationRequest
     {
@@ -68,7 +79,9 @@ namespace EncryptionServer
 
 
 
-
+    /// <summary>
+    ///операции кодирование и декодирование
+    /// </summary>
      class EncryptionClass
     {
        
@@ -90,6 +103,11 @@ namespace EncryptionServer
             sql = new SQLiteProvider();
         }
 
+        /// <summary>
+        /// обработчик операции
+        /// </summary>
+        /// <param name="rec"></param>
+        /// <returns></returns>
         public Response Operation(Request rec)
         {
             if (rec==null||!_operations.ContainsKey(rec.Operation))
@@ -105,7 +123,12 @@ namespace EncryptionServer
 
 
 
-
+        /// <summary>
+        /// операция кодирования/декодирования
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="operation"></param>
+        /// <returns></returns>
  private string DeEncoding(string message, OperationRequest operation)
         {
             StringBuilder result = new StringBuilder();
@@ -119,12 +142,19 @@ namespace EncryptionServer
 
 
 
-
+        /// <summary>
+        /// создание словаря кодирования
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<char, char> Coding()
         {
             return Coding(GetAllSymbol());
         }
 
+        /// <summary>
+        /// создание словаря кодирования
+        /// </summary>
+        /// <returns></returns>
         private static Dictionary<char, char> Coding(List<char> symbols)
         {
             Dictionary<char, char> code = new Dictionary<char, char>();
@@ -145,6 +175,10 @@ namespace EncryptionServer
             return code;
         }
 
+        /// <summary>
+        /// получение списка символов
+        /// </summary>
+        /// <returns></returns>
         private static List<char> GetAllSymbol()
         {
             List<char> Alphabet = new List<char>();
@@ -153,9 +187,7 @@ namespace EncryptionServer
             {
                 Alphabet.Add((char)i);
 
-                ////добавляем Ё
-                //if (i == 1045)
-                //    Alphabet.Add((char)1025);
+               
             }
             return Alphabet;
         }
@@ -165,10 +197,11 @@ namespace EncryptionServer
 
 
 
-    static class SerializationProvider
+    class XMLSerializationProvider: ISerializationProvider
     {
 
-        public static byte[] Serialize(Response data)
+
+        public byte[] Serialize(Response data)
         {
             if (data == null)
             {
@@ -176,15 +209,106 @@ namespace EncryptionServer
             }
             else
             {
-                MemoryStream streamMemory = new MemoryStream();
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(streamMemory, data);
-                return streamMemory.GetBuffer();
+                try
+                {
+
+                    XmlSerializer formatter = new XmlSerializer(typeof(Response));
+                    byte[] serialize;
+                    using (MemoryStream stream = new MemoryStream())
+                    {
+                        formatter.Serialize(stream, data);
+                        serialize = stream.ToArray();
+                    }
+
+
+                    return serialize;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return null;
+
+                }
             }
         }
 
 
-        public static Request Deserialize(byte[] data)
+        public Request Deserialize(byte[] data)
+        {
+
+
+            if (data == null)
+            {
+                return null;
+            }
+            else
+            {
+                if (data.Length == 0)
+                {
+                    return null;
+                }
+                else
+                {
+                    try
+                    {
+                        Request rec;
+                        XmlSerializer formatter = new XmlSerializer(typeof(Request));
+
+                                           using (MemoryStream stream = new MemoryStream(data))
+                        {
+                            rec = (Request)formatter.Deserialize(stream);
+                        }
+
+                        return rec;
+                  
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                        //временная заглушка
+                        //return new Request(OperationRequest.Encoding, "ААА");
+
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    class BinarySerializationProvider: ISerializationProvider
+    {
+
+
+      
+
+
+
+        public byte[] Serialize(Response data)
+        {
+            if (data == null)
+            {
+                return new byte[0];
+            }
+            else
+            {
+                try
+                {
+                    MemoryStream streamMemory = new MemoryStream();
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(streamMemory, data);
+                    return streamMemory.GetBuffer();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    return null;
+
+                }
+            }
+        }
+
+
+        public Request Deserialize(byte[] data)
         {
 
 
@@ -204,14 +328,16 @@ namespace EncryptionServer
                     {
 
                         BinaryFormatter formatter = new BinaryFormatter();
-                            formatter.Binder = new Binder();
+                          
                         MemoryStream ms = new MemoryStream(data);
-                        object re = formatter.Deserialize(ms);
+                    
                         return (Request)formatter.Deserialize(ms);
                     }
                     catch(Exception ex)
                     {
-                        return null;
+                        Debug.WriteLine(ex.Message);
+                        //временная заглушка
+                        return new Request(OperationRequest.Encoding, "ААА");
 
                     }
                 }
@@ -221,11 +347,25 @@ namespace EncryptionServer
 
     }
    
- 
-    public class Binder : SerializationBinder
+
+    public interface ISerializationProvider
     {
-        public override Type BindToType(string i_AssemblyName, string i_TypeName)
-        { Type typeToDeserialize = Type.GetType(String.Format(" {0}, {1}", i_TypeName, i_AssemblyName)); return typeToDeserialize; }
+        /// <summary>
+        /// сериализация ответа к  клиенту
+        /// </summary>
+        /// <param name="data">запрос</param>
+        /// <returns>массив byte[]</returns>
+        byte[] Serialize(Response data);
+
+        /// <summary>
+        ///  десериализация запроса от клиента
+        /// </summary>
+        /// <param name="data">массив byte[]-запрос клиента</param>
+        /// <returns>запрос-type Request </returns>
+        Request Deserialize(byte[] data);
     }
 
+
+
+   
 }

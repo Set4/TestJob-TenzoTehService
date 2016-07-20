@@ -17,7 +17,9 @@ namespace EncryptionServer
 
        const  string baseName = "encryption_db.db3";
 
-
+        /// <summary>
+        /// проверка и создание, заполнение бд при первом запуске
+        /// </summary>
         public void CreateDB()
         {
             if (!File.Exists(baseName))
@@ -29,6 +31,10 @@ namespace EncryptionServer
             }
         }
 
+        /// <summary>
+        /// заполнение таблицы шифрования
+        /// </summary>
+        /// <param name="code">словарь соответствия символов</param>
         private void AddItemasTable(Dictionary<char,char> code)
         {
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
@@ -53,7 +59,9 @@ namespace EncryptionServer
         }
 
 
-       
+       /// <summary>
+       /// создание таблицы шифрования
+       /// </summary>
         private void CreateTable()
         {
             
@@ -80,8 +88,8 @@ newsymbol CHAR (1) UNIQUE ON CONFLICT FAIL NOT NULL ON CONFLICT FAIL);";
 
         public char GetSymbol(char symbol, OperationRequest operation)
         {
-            //simvol oshibki
-            char newsymbol='@';
+            //если символ не найден в таблице он не шифруется
+            char newsymbol= symbol;
             SQLiteFactory factory = (SQLiteFactory)DbProviderFactories.GetFactory("System.Data.SQLite");
             using (SQLiteConnection connection = (SQLiteConnection)factory.CreateConnection())
             {
@@ -104,9 +112,15 @@ newsymbol CHAR (1) UNIQUE ON CONFLICT FAIL NOT NULL ON CONFLICT FAIL);";
                         default: return newsymbol;
                     }
 
-                            object obj=command.ExecuteScalar();
-                    if (obj is char)
-                        newsymbol = (char)obj;
+                            var response=command.ExecuteScalar();
+                    if (response != null && response is String)
+                    {
+                        string s = (string)response;
+                        if (!String.IsNullOrWhiteSpace(s) && s.Length == 1)
+                            newsymbol = s[0];
+                    }              
+                    //
+
                 }
             }
 

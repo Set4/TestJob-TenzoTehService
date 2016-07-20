@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace EncryptionServer
 {
+    /// <summary>
+    /// работа с клиентом сервера
+    /// </summary>
     class ClientHandler
     {
         public TcpClient client;
@@ -16,6 +19,9 @@ namespace EncryptionServer
             client = tcpClient;
         }
 
+        /// <summary>
+        /// обработка соединения с клиентом(получение сообщения, кодирование, отпревка результата)
+        /// </summary>
         public void Process()
         {
             NetworkStream stream = null;
@@ -28,25 +34,32 @@ namespace EncryptionServer
                  
                     byte[] result = new byte[0];
                     int bytes = 0;
-                    do
-                    {
+                do
+                {
 
-                        bytes = stream.Read(data, 0, data.Length);
+                    bytes = stream.Read(data, 0, data.Length);
+
                     //~~
-
-                    result = result.Concat(data).ToArray();
-
-                 
-
+                    if (bytes < data.Length)
+                    {
+                        byte[] newdata = new byte[bytes];
+                        Array.Copy(data, 0, newdata, 0, bytes);
+                        result = result.Concat(newdata).ToArray();
                     }
-                    while (stream.DataAvailable);
+                    else
+                        result = result.Concat(data).ToArray();
 
-                Request rec = SerializationProvider.Deserialize(result);
+
+
+                }
+                while (stream.DataAvailable);
+
+                Request rec = new XMLSerializationProvider().Deserialize(result);
 
                 Response response = new EncryptionClass().Operation(rec);
 
 
-                data = SerializationProvider.Serialize(response);
+                data = new XMLSerializationProvider().Serialize(response);
 
 
                     stream.Write(data, 0, data.Length);

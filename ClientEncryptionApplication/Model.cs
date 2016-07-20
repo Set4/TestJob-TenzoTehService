@@ -34,11 +34,21 @@ namespace ClientEncryptionApplication
 
     public interface IModel
     {
-      
+      /// <summary>
+      /// доступные операции над сообщением
+      /// </summary>
         List<OperationRequest> Operations { get; set; }
 
+        /// <summary>
+        /// событие получения ответа от сервера
+        /// </summary>
         event EventHandler<DeEncryptionResultEventArgs> DeEncryptionResultUpdated;
 
+        /// <summary>
+        /// запрос к серверу
+        /// </summary>
+        /// <param name="operation">операция</param>
+        /// <param name="message">сообщение</param>
         void UpdateDeEncryptionResult(OperationRequest operation, string message);
     }
 
@@ -46,7 +56,7 @@ namespace ClientEncryptionApplication
     public class Model : IModel
     {
      
-        //spisok operachii
+        
         public List<OperationRequest> Operations { get; set; }
 
 
@@ -54,9 +64,7 @@ namespace ClientEncryptionApplication
 
         public Model()
         {
-            // DeEncryptionResultsCollection = new ObservableCollection<DeEncryptionResult>();
-
-            //~~~
+             //~~~
             Operations = new List<OperationRequest>() { OperationRequest.Encoding, OperationRequest.Decoding };
         }
 
@@ -71,7 +79,7 @@ namespace ClientEncryptionApplication
 
         private async Task<DeEncryptionResult> GetDeEncryptionResult(OperationRequest operation, string message )
         {
-            DeEncryptionResult res = await new ServerHandler().Handler(new Request(operation, message));
+            DeEncryptionResult res = await new ServerHandler().Handler(new Request(operation, message), new XMLSerializationProvider());
             return res;
         }
     }

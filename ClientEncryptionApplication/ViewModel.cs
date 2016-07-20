@@ -21,6 +21,9 @@ namespace ClientEncryptionApplication
     public class ViewModel : Notifier, IViewModel
     {
         private string _message;
+        /// <summary>
+        /// вводимое сообщение
+        /// </summary>
         public string Message
         {
             get {
@@ -39,9 +42,14 @@ namespace ClientEncryptionApplication
             }
         }
 
-
+        /// <summary>
+        /// коллекция ответов от сервера
+        /// </summary>
  public ObservableCollection<DeEncryptionResult> DeEncryptionCollection { get; set; }
 
+        /// <summary>
+        /// список доступных опрераций
+        /// </summary>
  public List<OperationRequest> Operations { get { return _model.Operations; } }
 
 
@@ -69,6 +77,9 @@ namespace ClientEncryptionApplication
 
 
         public bool _sendEnabled;
+        /// <summary>
+        /// блокировка кнопки Send
+        /// </summary>
         public bool SendEnabled
         {
             get { return _sendEnabled; }
@@ -119,12 +130,13 @@ namespace ClientEncryptionApplication
         private void _model_DeEncryptionResultUpdated(object sender, DeEncryptionResultEventArgs e)
         {
             DeEncryptionCollection.Add(e._DeEncryptionResult);
-            //coll update!!
         }
 
+        /// <summary>
+        /// отправка сообщения на сервер
+        /// </summary>
         public void SendMessage()
         {
-          
             _model.UpdateDeEncryptionResult(_selectedOperation,Message);
         }
     }
