@@ -10,14 +10,15 @@ namespace EncryptionServer
 {
     class Program
     {
+       
         const int port = 8888;
         static TcpListener listener;
 
-        static Dictionary<string, string>  _operations = new Dictionary<string, string>();
-
+        
         static void Main(string[] args)
         {
-           
+            
+            new SQLiteProvider().CreateDB();
 
             try
             {
@@ -27,10 +28,11 @@ namespace EncryptionServer
 
                 while (true)
                 {
-                    
-                   //+ojidanie vvoda command d console
 
+                    //+ojidanie vvoda command d console
+                  
                     TcpClient client = listener.AcceptTcpClient();
+  Console.WriteLine("Новое подключение: "+client.Connected.ToString());
                     ClientHandler clientObject = new ClientHandler(client);
 
 

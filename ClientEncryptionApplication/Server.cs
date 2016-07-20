@@ -113,6 +113,7 @@ namespace ClientEncryptionApplication
                 else
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
+                    
                     MemoryStream ms = new MemoryStream(data);
                     return (Response)formatter.Deserialize(ms);
                 }
@@ -148,27 +149,27 @@ namespace ClientEncryptionApplication
                 await stream.WriteAsync(data, 0, data.Length);
 
                 // получаем ответ
-                data = new byte[64]; // буфер для получаемых данных
+                data = new byte[1024]; // буфер для получаемых данных
 
-                byte[] data1 = new byte[0];
+                byte[] result = new byte[0];
 
-                List<byte[]> items = new List<byte[]>();
+              
+
+
+              
                 int bytes = 0;
                 do
                 {
 
                     bytes = await stream.ReadAsync(data, 0, data.Length);
+                    //~~
+                    result = result.Concat(data).ToArray();
 
-
-                    data1 = new byte[data1.Length + data.Length];
-
-
-                    items.Add(data);
                 }
                 while (stream.DataAvailable);
 
 
-                return new DeEncryptionResult(request, SerializationProvider.Deserialize(data1));
+                return new DeEncryptionResult(request, SerializationProvider.Deserialize(result));
 
             }
             catch (Exception ex)

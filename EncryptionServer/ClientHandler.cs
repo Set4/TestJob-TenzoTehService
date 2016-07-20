@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -22,30 +23,38 @@ namespace EncryptionServer
             {
                 stream = client.GetStream();
                 byte[] data = new byte[64]; // буфер для получаемых данных
-                while (true)
-                {
-                    // получаем сообщение
-                    StringBuilder builder = new StringBuilder();
+             
+                 
+                 
+                    byte[] result = new byte[0];
                     int bytes = 0;
                     do
                     {
+
                         bytes = stream.Read(data, 0, data.Length);
-                        builder.Append(Encoding.Unicode.GetString(data, 0, bytes));
+                    //~~
+
+                    result = result.Concat(data).ToArray();
+
+                 
+
                     }
                     while (stream.DataAvailable);
 
-                    string message = builder.ToString();
+                Request rec = SerializationProvider.Deserialize(result);
 
-                    Console.WriteLine(message);
-                    // отправляем обратно сообщение в верхнем регистре
-                    message = message.Substring(message.IndexOf(':') + 1).Trim().ToUpper();
-                    data = Encoding.Unicode.GetBytes(message);
+                Response response = new EncryptionClass().Operation(rec);
+
+
+                data = SerializationProvider.Serialize(response);
+
+
                     stream.Write(data, 0, data.Length);
-                }
+              
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Debug.WriteLine("Error: " + ex.Message);
             }
             finally
             {
@@ -54,6 +63,8 @@ namespace EncryptionServer
               
             }
         }
+
+     
 
     }
 }
